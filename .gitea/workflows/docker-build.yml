@@ -2,7 +2,6 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [main]
     tags: ['v*']
 
 jobs:
@@ -28,10 +27,8 @@ jobs:
         with:
           images: git.nebulahvelvet.no/stianmjo/gjallar
           tags: |
-            type=ref,event=branch
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix=
 
       - name: Build and push
         uses: docker/build-push-action@v6
