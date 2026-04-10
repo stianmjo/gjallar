@@ -11,7 +11,7 @@ import (
 )
 
 // Run initializes and starts the Discord bot called from main.go
-func Run(token string) {
+func Run(token string, guildID string) {
 
 	// Create a new Discord session with the bot token
 	dg, err := discordgo.New("Bot " + token)
@@ -21,8 +21,8 @@ func Run(token string) {
 		log.Fatal("Error creating Discord session: ", err)
 	}
 
-	// Handler to see sent messages in a channel the bot can see
-	dg.AddHandler(messageHandler)
+	// Handler for slash command interactions
+	dg.AddHandler(interactionHandler)
 
 	// Open a websocket connection to discord
 	err = dg.Open()
@@ -35,6 +35,18 @@ func Run(token string) {
 	// Close the connection when the function returns
 	defer dg.Close()
 
+	// Register slash commands
+	slashCommands := []*discordgo.ApplicationCommand{
+		{Name: "ping", Description: "Replies with Pong!"},
+		{Name: "pong", Description: "Replies with Ping!"},
+	}
+	for _, cmd := range slashCommands {
+		_, err := dg.ApplicationCommandCreate(dg.State.User.ID, guildID, cmd)
+		if err != nil {
+			log.Fatalf("Error creating slash command %s: %v", cmd.Name, err)
+		}
+	}
+
 	log.Println("Gjallar is running. Press Ctrl+C to exit.")
 
 	// Create a channel to receive OS signals
@@ -44,14 +56,7 @@ func Run(token string) {
 	<-sc
 }
 
-// messageHandler is called every time a message is created
-func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
-
-	// Ignore messages from the bot itself to prevent loops
-	if m.Author.ID == s.State.User.ID {
-		return
-	}
-
-	// Pass the message to our command handler
-	commands.Handle(s, m)
+// interactionHandler is called every time a slash command interaction is created
+func interactionHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	commands.Handle(s, i)
 }
