@@ -4,16 +4,12 @@ on:
   push:
     tags: ['v*']
 
-env:
-  DOCKER_HOST: tcp://localhost:2375
-
 jobs:
   build:
     runs-on: linux
     steps:
       - name: Checkout
-        run: |
-          git clone --depth 1 --branch ${GITHUB_REF#refs/tags/} ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git .
+        uses: actions/checkout@v4
 
       - name: Login to Gitea Container Registry
         run: echo "${{ secrets.REGISTRY_TOKEN }}" | docker login git.nebulahvelvet.no -u stianmjo --password-stdin
