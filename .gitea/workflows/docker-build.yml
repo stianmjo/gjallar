@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Login to Gitea Container Registry
-        run: echo "${{ secrets.GITEA_TOKEN }}" | docker login git.nebulahvelvet.no -u ${{ gitea.actor }} --password-stdin
+        run: echo "${{ secrets.REGISTRY_TOKEN }}" | docker login git.nebulahvelvet.no -u stianmjo --password-stdin
 
       - name: Build and push
         run: |
