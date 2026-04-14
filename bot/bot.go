@@ -39,6 +39,7 @@ func Run(token string, guildID string) {
 	slashCommands := []*discordgo.ApplicationCommand{
 		{Name: "ping", Description: "Replies with Pong!"},
 		{Name: "pong", Description: "Replies with Ping!"},
+		{Name: "joke", Description: "Tells a random safe joke"},
 	}
 	for _, cmd := range slashCommands {
 		_, err := dg.ApplicationCommandCreate(dg.State.User.ID, guildID, cmd)
